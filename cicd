@@ -10,22 +10,21 @@ pipeline {
         stage('publish stage') {
             steps {
                 sh "echo ${BUILD_NUMBER}"
-                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]){
-                    sh "docker login -u ${env.dockerHubUSER} -p ${env.dockerHubPassword}"
-                sh 'docker tag tomcat_build:${BUILD_NUMBER} prajwal1327/mytomcat:${BUILD_NUMBER}'
-                sh 'docker push prajwal1327/mytomcat:${BUILD_NUMBER}'
-                    
-                sh 'curl -uprajwal.more7730@gmail.com:Prajwal@1 -T pack_tomcat-${BUILD_NUMBER}.tgz \"https://prajwaal1327.jfrog.io/artifactory/helm/pack_tomcat-${BUILD_NUMBER}.tgz\"'
+               withCredentials([usernamePassword(credentialsId: 'Dockerhub', passwordVariable: 'DockerhubPassword', usernameVariable: 'DockerhubUser')]){
+                sh "docker login -u ${env.DockerhubUser} -p ${env.DockerhubPassword}"
+                sh 'docker tag tomcat_build:${BUILD_VERSION} madhusudhanpk/tomcat:${BUILD_VERSION}'
+                sh 'docker push madhusudhanpk/tomcat:${BUILD_VERSION}'   
+                sh 'curl -umadhu050963@gmail.com:cmVmdGtuOjAxOjE3MDc5OTQ1MDA6NXNDZFcwaXJlYktaZmdMNnFCT3V5TzUzN3VC -T pack_tomcat-${BUILD_NUMBER}.tgz \"https://madhuhelm.jfrog.io/artifactory/helm/pack_tomcat-${BUILD_NUMBER}.tgz\"'
                 }
             }
         } 
         stage( 'my deploy' ) {
-        agent {label 'deploy'} 
+        agent {label 'publish'} 
             steps {
-               sh 'helm repo add helm https://prajwaal1327.jfrog.io/artifactory/api/helm/helm --username prajwal.more7730@gmail.com --password Prajwal@1'
+               sh 'helm repo add helm https://madhuhelm.jfrog.io/artifactory/api/helm/helm --username madhu050963@gmail.com --password cmVmdGtuOjAxOjE3MDc5OTQ1MDA6NXNDZFcwaXJlYktaZmdMNnFCT3V5TzUzN3VC'
                sh 'helm repo update'
                sh 'helm repo list'
-               sh 'helm upgrade --install mytomcat helm/pack_tomcat --version=${BUILD_NUMBER} --set selector_matchlabels=tomcat --set deployment_name=tomcat --set replicas=2 --set registry_name=prajwal1327 --set docker_repo_name=mytomcat --set image_tag=${BUILD_NUMBER} --set port_name=tomcat --set target_port=8080 --set port=8080 --set favorite.drink=coffee --set favorite.food=pizza'
+               sh 'helm upgrade --install tomcat helm/pack_tomcat --version=${BUILD_NUMBER} --set selector_matchlabels=tomcat --set deployment_name=tomcat --set replicas=2 --set registry_name=prajwal1327 --set docker_repo_name=mytomcat --set image_tag=${BUILD_NUMBER} --set port_name=tomcat --set target_port=8080 --set port=8080 --set favorite.drink=coffee --set favorite.food=pizza'
             }
         }    
     } 
